@@ -13,9 +13,10 @@ exports.Game = function() {
 
   var currentPlayer    = 0;
   var isGettingOutOfPenaltyBox = false;
-
+  var BOARD_SIZE = 12;
+  var WIN_COINS  = 6;
   var didPlayerWin = function(){
-    return !(purses[currentPlayer] == 6)
+    return !(purses[currentPlayer] == WIN_COINS)
   };
 
 exports.Game = function(options) {
@@ -58,10 +59,10 @@ exports.Game = function(options) {
   };
 
   this.add = function(playerName){
-    players.push(playerName);
-    places[this.howManyPlayers()] = 0;
-    purses[this.howManyPlayers()] = 0;
-    inPenaltyBox[this.howManyPlayers()] = false;
+    places[index] = 0;
+    var index = players.push(playerName) - 1;
+    purses[index] = 0;
+    inPenaltyBox[index] = false;
 
     logger.log(playerName + " was added");
     logger.log("They are player number " + players.length);
@@ -73,17 +74,25 @@ exports.Game = function(options) {
     return players.length;
   };
 
-
-  var askQuestion = function(){
-    if(currentCategory() == 'Pop')
-      logger.log(popQuestions.shift());
-    if(currentCategory() == 'Science')
-      logger.log(scienceQuestions.shift());
-    if(currentCategory() == 'Sports')
-      logger.log(sportsQuestions.shift());
-    if(currentCategory() == 'Rock')
-      logger.log(rockQuestions.shift());
+var askQuestion = function(){
+  var category = currentCategory();
+  var pools = {
+    Pop: popQuestions,
+    Science: scienceQuestions,
+    Sports: sportsQuestions,
+    Rock: rockQuestions
   };
+  logger.log(pools[category].shift());
+};
+
+var currentCategory = function(){
+  var r = places[currentPlayer] % 4;
+  if (r === 0) return 'Pop';
+  if (r === 1) return 'Science';
+  if (r === 2) return 'Sports';
+  return 'Rock';
+};
+
 
   this.roll = function(roll){
     logger.log(players[currentPlayer] + " is the current player");
@@ -95,8 +104,8 @@ exports.Game = function(options) {
 
         logger.log(players[currentPlayer] + " is getting out of the penalty box");
         places[currentPlayer] = places[currentPlayer] + roll;
-        if(places[currentPlayer] > 11){
-          places[currentPlayer] = places[currentPlayer] - 12;
+        if(places[currentPlayer] >= BOARD_SIZE){
+          places[currentPlayer] = places[currentPlayer] - BOARD_SIZE;
         }
 
         logger.log(players[currentPlayer] + "'s new location is " + places[currentPlayer]);
