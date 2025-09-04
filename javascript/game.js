@@ -181,22 +181,12 @@ var currentCategory = function(){
   };
 };
 
-var notAWinner = false;
-
-var game = new Game();
-
-game.add('Chet');
-game.add('Pat');
-game.add('Sue');
-
-do{
-
-  game.roll(Math.floor(Math.random()*6) + 1);
-
-  if(Math.floor(Math.random()*10) == 7){
-    notAWinner = game.wrongAnswer();
-  }else{
-    notAWinner = game.wasCorrectlyAnswered();
-  }
-
-}while(notAWinner);
+this.debugState = function(){
+  return {
+    players: players.slice(0),
+    places: places.slice(0),
+    purses: purses.slice(0),
+    inPenaltyBox: inPenaltyBox.slice(0),
+    currentPlayer: currentPlayer
+  };
+};
