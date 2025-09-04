@@ -1,6 +1,8 @@
 exports = typeof window !== "undefined" && window !== null ? window : global;
 
-exports.Game = function() {
+exports.Game = function(options) {
+  options = options || {};
+  var logger = options.logger || console;
   var players          = new Array();
   var places           = new Array(6);
   var purses           = new Array(6);
@@ -19,29 +21,7 @@ exports.Game = function() {
     return !(purses[currentPlayer] == WIN_COINS)
   };
 
-exports.Game = function(options) {
-  options = options || {};
-  var logger = options.logger || console;
-    if(places[currentPlayer] == 0)
-      return 'Pop';
-    if(places[currentPlayer] == 4)
-      return 'Pop';
-    if(places[currentPlayer] == 8)
-      return 'Pop';
-    if(places[currentPlayer] == 1)
-      return 'Science';
-    if(places[currentPlayer] == 5)
-      return 'Science';
-    if(places[currentPlayer] == 9)
-      return 'Science';
-    if(places[currentPlayer] == 2)
-      return 'Sports';
-    if(places[currentPlayer] == 6)
-      return 'Sports';
-    if(places[currentPlayer] == 10)
-      return 'Sports';
-    return 'Rock';
-  };
+
 
   this.createRockQuestion = function(index){
     return "Rock Question "+index;
@@ -54,13 +34,15 @@ exports.Game = function(options) {
     rockQuestions.push(this.createRockQuestion(i));
   };
 
-  this.isPlayable = function(howManyPlayers){
-    return howManyPlayers >= 2;
+  this.isPlayable = function(){
+    return players.length >= 2;  
   };
 
+
   this.add = function(playerName){
-    places[index] = 0;
     var index = players.push(playerName) - 1;
+
+    places[index] = 0;
     purses[index] = 0;
     inPenaltyBox[index] = false;
 
@@ -74,24 +56,24 @@ exports.Game = function(options) {
     return players.length;
   };
 
-var askQuestion = function(){
-  var category = currentCategory();
-  var pools = {
-    Pop: popQuestions,
-    Science: scienceQuestions,
-    Sports: sportsQuestions,
-    Rock: rockQuestions
+  var askQuestion = function(){
+    var category = currentCategory();
+    var pools = {
+      Pop: popQuestions,
+      Science: scienceQuestions,
+      Sports: sportsQuestions,
+      Rock: rockQuestions
+    };
+    logger.log(pools[category].shift());
   };
-  logger.log(pools[category].shift());
-};
 
-var currentCategory = function(){
-  var r = places[currentPlayer] % 4;
-  if (r === 0) return 'Pop';
-  if (r === 1) return 'Science';
-  if (r === 2) return 'Sports';
-  return 'Rock';
-};
+  var currentCategory = function(){
+    var r = places[currentPlayer] % 4;
+    if (r === 0) return 'Pop';
+    if (r === 1) return 'Science';
+    if (r === 2) return 'Sports';
+    return 'Rock';
+  };
 
 
   this.roll = function(roll){
@@ -179,14 +161,16 @@ var currentCategory = function(){
       currentPlayer = 0;
 		return true;
   };
-};
 
-this.debugState = function(){
-  return {
-    players: players.slice(0),
-    places: places.slice(0),
-    purses: purses.slice(0),
-    inPenaltyBox: inPenaltyBox.slice(0),
-    currentPlayer: currentPlayer
+  this.debugState = function(){
+    return {
+      players: players.slice(0),
+      places: places.slice(0),
+      purses: purses.slice(0),
+      inPenaltyBox: inPenaltyBox.slice(0),
+      currentPlayer: currentPlayer
+    };
   };
 };
+
+

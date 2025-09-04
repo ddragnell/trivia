@@ -1,9 +1,9 @@
 require('./game.js');
 
 var game = new Game(); 
-game.add('Chet');
-game.add('Pat');
-game.add('Sue');
+game.add('Andres');
+game.add('Juan');
+game.add('Manuela');
 
 var notAWinner = false;
 do {
